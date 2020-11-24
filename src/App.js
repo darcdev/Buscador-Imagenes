@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
 import Formulario from "./components/Formulario";
+import ListadoImagenes from "./components/ListadoImagenes";
 
 const App = () => {
   const [busqueda, guardarBusqueda] = useState("");
@@ -22,11 +23,52 @@ const App = () => {
     consultarApi();
   }, [busqueda, paginaActual]);
 
+  // definir la página anterior
+  const paginaAnterior = () => {
+    const nuevaPaginaActual = paginaActual - 1;
+
+    if (nuevaPaginaActual === 0) return;
+
+    guardarPaginaActual(nuevaPaginaActual);
+  };
+
+  // definir la pagina siguiente
+  const paginaSiguiente = () => {
+    const nuevaPaginaActual = paginaActual + 1;
+
+    if (nuevaPaginaActual > totalPaginas) return;
+
+    guardarPaginaActual(nuevaPaginaActual);
+  };
   return (
     <div className="container">
       <div className="jumbotron">
         <p className="lead text-center">Buscador de Imagenes</p>
         <Formulario guardarBusqueda={guardarBusqueda} />
+      </div>
+
+      <div className="row justify-content-center">
+        <ListadoImagenes imagenes={imagenes} />
+
+        {paginaActual === 1 ? null : (
+          <button
+            type="button"
+            className="bbtn btn-info mr-1"
+            onClick={paginaAnterior}
+          >
+            &laquo; Anterior{" "}
+          </button>
+        )}
+
+        {paginaActual === totalPaginas ? null : (
+          <button
+            type="button"
+            className="bbtn btn-info"
+            onClick={paginaSiguiente}
+          >
+            Siguiente &raquo;
+          </button>
+        )}
       </div>
     </div>
   );
