@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import Formulario from "./components/Formulario";
 import ListadoImagenes from "./components/ListadoImagenes";
+import Paginador from "./components/Paginador";
 
 const App = () => {
   const [busqueda, guardarBusqueda] = useState("");
@@ -18,6 +19,16 @@ const App = () => {
       const respuesta = await fetch(url);
       const resultado = await respuesta.json();
       guardarImagenes(resultado.hits);
+
+      // calcular el total de paginas
+      const calcularTotalPaginas = Math.ceil(
+        resultado.totalHits / imagenesPorPagina
+      );
+      guardarTotalPaginas(calcularTotalPaginas);
+
+      // Mover la pantalla hacia arriba
+      const jumbotron = document.querySelector(".jumbotron");
+      jumbotron.scrollIntoView({ behavior: "smooth" });
     };
 
     consultarApi();
@@ -46,29 +57,17 @@ const App = () => {
         <p className="lead text-center">Buscador de Imagenes</p>
         <Formulario guardarBusqueda={guardarBusqueda} />
       </div>
-
       <div className="row justify-content-center">
         <ListadoImagenes imagenes={imagenes} />
-
-        {paginaActual === 1 ? null : (
-          <button
-            type="button"
-            className="bbtn btn-info mr-1"
-            onClick={paginaAnterior}
-          >
-            &laquo; Anterior{" "}
-          </button>
-        )}
-
-        {paginaActual === totalPaginas ? null : (
-          <button
-            type="button"
-            className="bbtn btn-info"
-            onClick={paginaSiguiente}
-          >
-            Siguiente &raquo;
-          </button>
-        )}
+        {console.log(imagenes)}
+        {busqueda !== "" && imagenes.length !== 0 ? (
+          <Paginador
+            paginaActual={paginaActual}
+            paginaAnterior={paginaAnterior}
+            paginaSiguiente={paginaSiguiente}
+            totalPaginas={totalPaginas}
+          />
+        ) : null}
       </div>
     </div>
   );
